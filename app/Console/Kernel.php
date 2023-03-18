@@ -12,7 +12,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // retrieve daily currency rates with the default provider
+        $schedule->command('app:get-daily-currency-exchange-rates')
+            ->daily()
+            ->appendOutputTo(storage_path().'/logs/get-daily-currency-exchange-rates.log');
     }
 
     /**
