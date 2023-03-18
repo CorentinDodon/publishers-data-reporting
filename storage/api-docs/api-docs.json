@@ -1,0 +1,159 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Publisher's data reporting API",
+        "description": "Laravel project to expose publisher's and reporting data",
+        "contact": {
+            "email": "corentin.dodon@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost",
+            "description": "Dev Server"
+        }
+    ],
+    "paths": {
+        "/reporting-data/publisher/{publisherId}/interval/{startDate}/{endDate}": {
+            "get": {
+                "tags": [
+                    "ReportingData"
+                ],
+                "summary": "reporting_data by $publisherId between $startDate and $endDate",
+                "description": "Return reporting_data by $publisherId between $startDate and $endDate, currency can be specified, USD by default",
+                "operationId": "getReportingDataByPublisherByInterval",
+                "parameters": [
+                    {
+                        "name": "publisherId",
+                        "in": "path",
+                        "description": "Publisher's id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "startDate",
+                        "in": "path",
+                        "description": "From what date the results will be based on",
+                        "required": true,
+                        "schema": {
+                            "type": "datetime"
+                        },
+                        "example": "2023-03-09T07:17:27Z"
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "path",
+                        "description": "Until what date the results will be based on",
+                        "required": true,
+                        "schema": {
+                            "type": "datetime"
+                        },
+                        "example": "2023-03-18T14:35:31Z"
+                    },
+                    {
+                        "name": "currency",
+                        "in": "query",
+                        "description": "Currency code of the revenues (USD by default)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "USD"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "page number",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "number of element per page",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        },
+        "/reporting-data/revenues/publisher/{publisherId}/interval/{startDate}/{endDate}": {
+            "get": {
+                "tags": [
+                    "ReportingData"
+                ],
+                "summary": "sum of revenues for $publisherId between $startDate and $endDate",
+                "description": "Return the sum of revenues for $publisherId between $startDate and $endDate currency can be specified, USD by default",
+                "operationId": "getTotalRevenuesForPublisherByInterval",
+                "parameters": [
+                    {
+                        "name": "publisherId",
+                        "in": "path",
+                        "description": "Publisher's id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "startDate",
+                        "in": "path",
+                        "description": "From what date the results will be based on",
+                        "required": true,
+                        "schema": {
+                            "type": "datetime"
+                        },
+                        "example": "2023-03-09T07:17:27Z"
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "path",
+                        "description": "Until what date the results will be based on",
+                        "required": true,
+                        "schema": {
+                            "type": "datetime"
+                        },
+                        "example": "2023-03-18T14:35:31Z"
+                    },
+                    {
+                        "name": "currency",
+                        "in": "query",
+                        "description": "Currency code of the revenues (USD by default)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "USD"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        }
+    }
+}

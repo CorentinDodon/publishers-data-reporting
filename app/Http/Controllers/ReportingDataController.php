@@ -13,8 +13,78 @@ use Illuminate\Support\Facades\DB;
 class ReportingDataController extends Controller
 {
     /**
-     * Return reporting_data by $publisherId between $startDate and $endDate
-     * currency can be specified, USD by default
+     * @OA\Get(
+     *      path="/reporting-data/publisher/{publisherId}/interval/{startDate}/{endDate}",
+     *      operationId="getReportingDataByPublisherByInterval",
+     *      tags={"ReportingData"},
+     *      summary="reporting_data by $publisherId between $startDate and $endDate",
+     *      description="Return reporting_data by $publisherId between $startDate and $endDate, currency can be specified, USD by default",
+     *      @OA\Parameter(
+     *          name="publisherId",
+     *          description="Publisher's id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Parameter(
+     *          name="startDate",
+     *          description="From what date the results will be based on",
+     *          required=true,
+     *          in="path",
+     *          example="2023-03-09T07:17:27Z",
+     *          @OA\Schema(
+     *              type="datetime"
+     *          )
+     *      ),
+     *      @OA\Parameter(
+     *          name="endDate",
+     *          description="Until what date the results will be based on",
+     *          required=true,
+     *          in="path",
+     *          example="2023-03-18T14:35:31Z",
+     *          @OA\Schema(
+     *              type="datetime"
+     *          )
+     *      ),
+     *      @OA\Parameter(
+     *          name="currency",
+     *          description="Currency code of the revenues (USD by default)",
+     *          required=false,
+     *          in="query",
+     *          example="USD",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\Parameter(
+     *          name="page",
+     *          description="page number",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\Parameter(
+     *          name="perPage",
+     *          description="number of element per page",
+     *          required=false,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *      @OA\Response(
+     *          response=400 ,
+     *          description="Bad Request",
+     *      )
+     *     )
      *
      * @param Request $request
      * @param int $publisherId
@@ -31,7 +101,7 @@ class ReportingDataController extends Controller
             $startDate = Carbon::createFromDate($startDate);
             $endDate = Carbon::createFromDate($endDate);
         } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json(['error' => $e->getMessage()], 400);
         }
 
         // use Eloquent to retrieve an array of ReportingData
@@ -51,8 +121,60 @@ class ReportingDataController extends Controller
     }
 
     /**
-     * Return the sum of revenues for $publisherId between $startDate and $endDate
-     * currency can be specified, USD by default
+     * @OA\Get(
+     *      path="/reporting-data/revenues/publisher/{publisherId}/interval/{startDate}/{endDate}",
+     *      operationId="getTotalRevenuesForPublisherByInterval",
+     *      tags={"ReportingData"},
+     *      summary="sum of revenues for $publisherId between $startDate and $endDate",
+     *      description="Return the sum of revenues for $publisherId between $startDate and $endDate currency can be specified, USD by default",
+     *      @OA\Parameter(
+     *          name="publisherId",
+     *          description="Publisher's id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Parameter(
+     *          name="startDate",
+     *          description="From what date the results will be based on",
+     *          required=true,
+     *          in="path",
+     *          example="2023-03-09T07:17:27Z",
+     *          @OA\Schema(
+     *              type="datetime"
+     *          )
+     *      ),
+     *      @OA\Parameter(
+     *          name="endDate",
+     *          description="Until what date the results will be based on",
+     *          required=true,
+     *          in="path",
+     *          example="2023-03-18T14:35:31Z",
+     *          @OA\Schema(
+     *              type="datetime"
+     *          )
+     *      ),
+     *      @OA\Parameter(
+     *          name="currency",
+     *          description="Currency code of the revenues (USD by default)",
+     *          required=false,
+     *          in="query",
+     *          example="USD",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *      @OA\Response(
+     *          response=400 ,
+     *          description="Bad Request",
+     *      )
+     *     )
      *
      * @param Request $request
      * @param int $publisherId
@@ -69,7 +191,7 @@ class ReportingDataController extends Controller
             $startDate = Carbon::createFromDate($startDate);
             $endDate = Carbon::createFromDate($endDate);
         } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json(['error' => $e->getMessage()], 400);
         }
 
         // raw SQL to get the sum of revenues for given publisher for specifier time interval
