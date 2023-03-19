@@ -1,66 +1,90 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Publisher's revenues and data reporting
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Publisher's revenues and data reporting API : A simple PHP Laravel / MySQL project
 
-## About Laravel
+## Tech Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**Back:** PHP 8.2, Laravel 10.4
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**Database:** MySQL
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**Environment:** Docker + Sail
 
-## Learning Laravel
+**Additional dev dependencies** : "kitloong/laravel-migrations-generator", "reliese/laravel"
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Prerequisites
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Docker must be installed on your device.
+## Installation
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+#### 1) Install vendor dependencies with Composer
 
-## Laravel Sponsors
+```bash
+composer install
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+#### 1) Install vendor dependencies without Composer
+Either create a container with composer to install the vendor dependencies
+```bash
+docker run --rm --interactive --tty -v $(pwd):/app composer install
+```
 
-### Premium Partners
+Either create a temporary container to prepare the project
+```bash
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v $(pwd):/var/www/html \
+    -w /var/www/html \
+    laravelsail/php82-composer:latest \
+    composer install --ignore-platform-reqs
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+#### 2) Build the container with Sail
+```bash
+./vendor/bin/sail up
+```
 
-## Contributing
+#### 3) Execute the migrations
+```bash
+./vendor/bin/sail artisan migrate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+#### 3) Populate the database with seeder
+```bash
+./vendor/bin/sail artisan db:seed
+```
 
-## Code of Conduct
+#### 4) Get latest currency rates from default provider
+```bash
+./vendor/bin/sail artisan app:get-daily-currency-exchange-rates
+```
+## API Reference
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### Get reporting data by Publisher for the specified date interval
 
-## Security Vulnerabilities
+```http
+  GET /api/reporting-data/publisher/{publisherId}/interval/{startDate}/{endDate}?page={page}&perPage={perPage}&currency={currency}
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `publisherId` | `string` | **Required**. The id of the publisher's data |
+| `startDate` | `string` | **Required**. startDate of the observed dataset |
+| `endDate` | `string` | **Required**. endDate of the observed dataset |
+| `page` | `string` | Page number of dataset |
+| `perPage` | `string` | Number of element per page |
+| `currency` | `string` | currency of the revenues (USD by default) |
 
-## License
+#### Get total revenues of Publisher for the specified date interval
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```http
+  GET /api/reporting-data/revenues/publisher/{publisherId}/interval/{startDate}/{endDate}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `publisherId` | `string` | **Required**. The id of the publisher's data |
+| `startDate` | `string` | **Required**. startDate of the observed dataset |
+| `endDate` | `string` | **Required**. endDate of the observed dataset |
+
+
